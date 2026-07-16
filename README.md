@@ -61,6 +61,6 @@ Plain semantic HTML, modern CSS, and vanilla JavaScript in one self-contained fi
 
 ## Credits & use
 
-Developed & presented by **Dr. Elizabeth Gilbert**, Sr. Advisor | Executive Consultant, PQE Group.
+Developed by Valor Promotions & presented by **Dr. Elizabeth Gilbert**, Sr. Advisor | Executive Consultant, PQE Group.
 
-Educational reflection tools courtesy of **Trinity National Consulting**, used with permission for this workshop. Portions of this material are provided for educational use during the workshop; duplication, adaptation, or commercial use outside this workshop requires permission.
+Educational reflection tools courtesy of **PQE**, used with permission for this workshop. Portions of this material are provided for educational use during the workshop; duplication, adaptation, or commercial use outside this workshop requires permission.
