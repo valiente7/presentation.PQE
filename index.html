@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quality Starts Before the Job — Workforce Maturity Workshop</title>
+<style>
+  :root{
+    --blue:#0096d6; --blue-deep:#0a6088; --blue-dark:#08415c;
+    --yellow:#f7c600; --slate:#4b5a66;
+    --ink:#1c2830; --muted:#5c6b75;
+    --bg:#eef4f8; --card:#ffffff; --line:#d6e1ea;
+    --tint:#eaf6fd; --tint-line:#bfe3f6;
+    --ok:#127a3e;
+    --radius:14px; --shadow:0 2px 14px rgba(12,54,80,.08);
+    --maxw:760px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:var(--maxw); margin:0 auto; padding:0 18px}
+  h1,h2,h3{line-height:1.2; margin:0}
+  p{margin:0 0 .8em}
+  a{color:var(--blue-deep)}
+  button{font-family:inherit}
+  :focus-visible{outline:3px solid var(--yellow); outline-offset:2px; border-radius:6px}
+
+  /* ---------- Top bar / progress ---------- */
+  header.bar{
+    position:sticky; top:0; z-index:20; background:rgba(255,255,255,.94);
+    backdrop-filter:blur(6px); border-bottom:1px solid var(--line);
+  }
+  .bar .wrap{display:flex; align-items:center; gap:12px; padding:10px 18px}
+  .brand{display:flex; align-items:center; gap:9px; font-weight:800; color:var(--blue-deep); font-size:15px}
+  .brand .mark{width:26px;height:26px;border-radius:7px;background:var(--yellow);position:relative;flex:0 0 auto}
+  .brand .mark::after{content:"";position:absolute;inset:6px 6px 6px 6px;border:3px solid var(--blue);border-radius:3px}
+  .step-label{margin-left:auto; font-size:13px; color:var(--muted); font-weight:600; white-space:nowrap}
+  .progress{height:6px; background:var(--line)}
+  .progress > i{display:block; height:100%; width:0; background:linear-gradient(90deg,var(--blue),var(--blue-deep)); transition:width .35s ease}
+
+  main{padding:26px 0 120px}
+  .screen{animation:fade .35s ease}
+  @keyframes fade{from{opacity:0; transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  /* ---------- Kicker / headings ---------- */
+  .kicker{display:inline-block; font-size:12px; letter-spacing:.09em; font-weight:800;
+    text-transform:uppercase; color:var(--blue-deep); background:var(--tint);
+    border:1px solid var(--tint-line); padding:5px 11px; border-radius:999px; margin-bottom:14px}
+  .sec-title{font-size:27px; color:var(--blue-dark); margin-bottom:12px; letter-spacing:-.01em}
+  .teach{color:#33424c; font-size:16.5px}
+  .teach.small{font-size:15.5px; color:var(--muted)}
+
+  /* ---------- Callout (quotes / classroom bridge) ---------- */
+  .callout{border-left:5px solid var(--yellow); background:#fffdf2; border-radius:10px;
+    padding:14px 16px; margin:16px 0; font-size:15.5px}
+  .callout .lbl{font-weight:800; color:var(--blue-deep); display:block; margin-bottom:3px; font-size:13px; letter-spacing:.02em; text-transform:uppercase}
+  blockquote{margin:0; font-style:italic; color:#3a4952}
+
+  /* ---------- Activity card ---------- */
+  .activity{background:var(--card); border:1px solid var(--line); border-top:4px solid var(--blue);
+    border-radius:var(--radius); box-shadow:var(--shadow); padding:18px 18px 16px; margin:16px 0}
+  .activity .atag{font-size:11.5px; font-weight:800; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--blue); display:flex; align-items:center; gap:7px; margin-bottom:8px}
+  .activity .atag .dot{width:8px;height:8px;border-radius:50%;background:var(--blue)}
+  .activity h3{font-size:18px; color:var(--ink); margin-bottom:6px}
+  .helper{font-size:13.5px; color:var(--muted); margin:2px 0 10px}
+  label.q{display:block; font-weight:700; color:var(--ink); margin:4px 0 8px; font-size:16px}
+  textarea{width:100%; min-height:96px; resize:vertical; padding:11px 12px; font:inherit;
+    border:1.5px solid var(--line); border-radius:10px; background:#fbfdff; color:var(--ink)}
+  textarea:focus{border-color:var(--blue)}
+  input.line{width:100%; padding:10px 12px; font:inherit; border:1.5px solid var(--line);
+    border-radius:10px; background:#fbfdff; margin-bottom:4px}
+  input.line:focus{border-color:var(--blue)}
+  .saved-note{font-size:12.5px; color:var(--ok); font-weight:700; height:16px; margin-top:5px; opacity:0; transition:opacity .2s}
+  .saved-note.show{opacity:1}
+
+  /* ---------- Choice cards ---------- */
+  .choices{display:grid; gap:9px; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); margin-top:6px}
+  .choice{display:flex; flex-direction:column; gap:2px; text-align:left; cursor:pointer;
+    border:1.5px solid var(--line); background:#fbfdff; border-radius:11px; padding:11px 13px; font:inherit; color:var(--ink)}
+  .choice:hover{border-color:var(--blue); background:var(--tint)}
+  .choice[aria-pressed="true"]{border-color:var(--blue-deep); background:var(--tint); box-shadow:inset 0 0 0 1.5px var(--blue-deep)}
+  .choice b{font-size:15.5px; color:var(--blue-dark)}
+  .choice span{font-size:12.5px; color:var(--muted)}
+
+  /* ---------- Maturity model strip ---------- */
+  .model{display:grid; gap:8px; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); margin:14px 0}
+  .model .m{background:var(--tint); border:1px solid var(--tint-line); border-radius:11px; padding:12px}
+  .model .m b{display:block; color:var(--blue-dark); font-size:15px}
+  .model .m span{font-size:12.5px; color:var(--muted)}
+
+  /* ---------- Scenario ---------- */
+  .scenario{border-left:5px solid var(--blue); background:#f7fbfe; border-radius:10px; padding:13px 15px; margin-bottom:10px}
+  .scenario .sh{font-weight:800; color:var(--blue-deep); font-size:15px; margin-bottom:5px}
+  .scenario p{font-size:15px; margin:0}
+  .qs{margin:10px 0 8px; padding-left:20px; font-size:14.5px; color:#3a4952}
+  .qs li{margin:2px 0}
+  .reveal-btn{display:inline-flex; align-items:center; gap:7px; border:1.5px solid var(--blue-deep);
+    color:var(--blue-deep); background:#fff; font-weight:700; font-size:13.5px; padding:8px 13px;
+    border-radius:999px; cursor:pointer; margin-top:4px}
+  .reveal-btn:hover{background:var(--tint)}
+  .why{margin-top:10px; background:#fff8e6; border:1px solid #f2dd93; border-radius:10px;
+    padding:11px 13px; font-size:14.5px; color:#4a3d12; display:none}
+  .why.show{display:block; animation:fade .25s ease}
+  .why b{color:#7a6410}
+
+  /* ---------- Rating grid ---------- */
+  .rate-row{display:flex; align-items:center; gap:10px; padding:9px 0; border-bottom:1px solid var(--line); flex-wrap:wrap}
+  .rate-row:last-child{border-bottom:0}
+  .rate-row .stmt{flex:1 1 220px; font-size:14.5px}
+  .rate-opts{display:flex; gap:6px; flex:0 0 auto}
+  .rate-opts button{border:1.5px solid var(--line); background:#fff; color:var(--muted); font-weight:700;
+    font-size:12.5px; padding:7px 11px; border-radius:999px; cursor:pointer}
+  .rate-opts button:hover{border-color:var(--blue)}
+  .rate-opts button[aria-pressed="true"]{color:#fff; border-color:var(--blue-deep); background:var(--blue-deep)}
+  .rate-opts button.lvl1[aria-pressed="true"]{background:var(--slate); border-color:var(--slate)}
+  .rate-opts button.lvl2[aria-pressed="true"]{background:var(--blue); border-color:var(--blue)}
+  .rate-opts button.lvl3[aria-pressed="true"]{background:var(--ok); border-color:var(--ok)}
+
+  /* ---------- Resources ---------- */
+  .res{background:var(--card); border:1px solid var(--line); border-radius:11px; padding:13px 15px; margin-bottom:9px}
+  .res b{color:var(--blue-dark); font-size:15px}
+  .res p{font-size:13.5px; color:var(--muted); margin:3px 0 0}
+
+  /* ---------- Nav buttons ---------- */
+  .navbar{position:fixed; bottom:0; left:0; right:0; z-index:20; background:rgba(255,255,255,.96);
+    border-top:1px solid var(--line); backdrop-filter:blur(6px)}
+  .navbar .wrap{display:flex; gap:10px; padding:12px 18px; align-items:center}
+  .btn{font-weight:800; font-size:15px; border-radius:11px; padding:13px 20px; cursor:pointer; border:1.5px solid transparent}
+  .btn.primary{background:var(--blue-deep); color:#fff; border-color:var(--blue-deep)}
+  .btn.primary:hover{background:var(--blue-dark)}
+  .btn.ghost{background:#fff; color:var(--blue-deep); border-color:var(--line)}
+  .btn.ghost:hover{border-color:var(--blue)}
+  .btn:disabled{opacity:.4; cursor:default}
+  .btn.next{margin-left:auto}
+  .btn.block{width:100%; text-align:center}
+
+  /* ---------- Welcome ---------- */
+  .hero{text-align:center; padding:22px 0 6px}
+  .hero .mark-lg{width:60px;height:60px;border-radius:15px;background:var(--yellow);position:relative;margin:0 auto 18px}
+  .hero .mark-lg::after{content:"";position:absolute;inset:13px;border:5px solid var(--blue);border-radius:6px}
+  .hero h1{font-size:34px; color:var(--blue-dark); letter-spacing:-.02em}
+  .hero .sub{font-size:18px; color:var(--blue); font-weight:700; margin-top:8px}
+  .hero .purpose{max-width:560px; margin:16px auto 0; color:#33424c; font-size:16.5px}
+  .hero .who{margin-top:18px; font-size:14px; color:var(--muted)}
+  .hero .who b{color:var(--ink)}
+  .hero .aud{display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin:18px auto 0; max-width:620px}
+  .hero .aud span{font-size:12.5px; font-weight:700; color:var(--blue-deep); background:var(--tint);
+    border:1px solid var(--tint-line); padding:6px 12px; border-radius:999px}
+  .obj{background:var(--card); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow);
+    padding:18px 20px; margin:24px auto 0; max-width:600px; text-align:left}
+  .obj h2{font-size:15px; color:var(--blue-deep); text-transform:uppercase; letter-spacing:.05em; margin-bottom:10px}
+  .obj ol{margin:0; padding-left:20px}
+  .obj li{margin:6px 0; font-size:15px}
+  .obj .roadmap{margin-top:12px; font-size:13px; color:var(--muted); border-top:1px dashed var(--line); padding-top:10px}
+
+  /* ---------- Completion ---------- */
+  .done h1{font-size:30px; color:var(--blue-dark); text-align:center}
+  .done .lead{text-align:center; color:#33424c; margin:8px auto 20px; max-width:520px}
+  .stat{display:flex; gap:14px; justify-content:center; margin:0 0 22px; flex-wrap:wrap}
+  .stat .box{background:var(--card); border:1px solid var(--line); border-radius:13px; box-shadow:var(--shadow);
+    padding:14px 22px; text-align:center; min-width:120px}
+  .stat .box b{display:block; font-size:30px; color:var(--blue-deep); line-height:1}
+  .stat .box span{font-size:12.5px; color:var(--muted)}
+  .takeaways{background:linear-gradient(135deg,#eaf6fd,#f7fbee); border:1px solid var(--tint-line);
+    border-radius:var(--radius); padding:18px 20px; margin-bottom:20px}
+  .takeaways h2{font-size:16px; color:var(--blue-deep); margin-bottom:10px}
+  .takeaways ul{margin:0; padding-left:20px}
+  .takeaways li{margin:6px 0; font-size:15px}
+  .review-block{margin-top:8px}
+  .review-block h3{font-size:15px; color:var(--blue-dark); margin:16px 0 6px}
+  .review-item{font-size:14.5px; margin:0 0 8px; padding-left:12px; border-left:3px solid var(--tint-line)}
+  .review-item .rq{font-weight:700; color:var(--ink)}
+  .review-item .ra{color:#3a4952; white-space:pre-wrap}
+  .review-item .empty{color:#9aa7b0; font-style:italic}
+
+  .footer-note{text-align:center; font-size:12px; color:#9aa7b0; margin-top:30px; line-height:1.5}
+
+  @media (max-width:560px){
+    .sec-title{font-size:23px}
+    .hero h1{font-size:27px}
+    .navbar .wrap{padding:10px 14px}
+    .btn{padding:12px 16px; font-size:14.5px}
+  }
+  @media print{
+    header.bar,.navbar,.reveal-btn,.btn{display:none!important}
+    body{background:#fff}
+    #print-transcript{display:block!important}
+    .screen:not(#screen-print){display:none}
+  }
+  #print-transcript{display:none; padding:20px 0}
+  #print-transcript h1{font-size:22px;color:var(--blue-dark);margin-bottom:4px}
+  #print-transcript .pi{margin:0 0 12px}
+  #print-transcript .pq{font-weight:700}
+  #print-transcript .pa{white-space:pre-wrap;color:#333}
+</style>
+</head>
+<body>
+
+<header class="bar" id="topbar" hidden>
+  <div class="wrap">
+    <div class="brand"><span class="mark" aria-hidden="true"></span> Workforce Maturity</div>
+    <div class="step-label" id="stepLabel">Section 1</div>
+  </div>
+  <div class="progress"><i id="progFill"></i></div>
+</header>
+
+<main>
+  <div class="wrap" id="app" aria-live="polite"></div>
+</main>
+
+<nav class="navbar" id="navbar" hidden>
+  <div class="wrap">
+    <button class="btn ghost" id="backBtn" type="button">Back</button>
+    <button class="btn primary next" id="nextBtn" type="button">Next</button>
+  </div>
+</nav>
+
+<!-- hidden print transcript, filled on demand -->
+<div id="print-transcript" class="screen" aria-hidden="true"></div>
+
+<script>
+"use strict";
+
+/* ============ CONTENT MODEL (from PQE Workforce Maturity deck + workbook) ============ */
+const MODEL = [
+  {b:"Knowledge", s:"What students know"},
+  {b:"Skills",    s:"What students can do"},
+  {b:"Behaviors", s:"How students show up"},
+  {b:"Judgment",  s:"How students decide"},
+  {b:"Identity",  s:"Who students become"}
+];
+const HABITS = [
+  "I take ownership of my work and follow through on commitments.",
+  "I ask questions when I am uncertain rather than guessing.",
+  "I document carefully because records carry meaning and risk.",
+  "I communicate concerns respectfully and professionally.",
+  "I respond to feedback with curiosity rather than defensiveness.",
+  "I recognize that quality is connected to patients and public trust.",
+  "I contribute to teamwork and psychological safety.",
+  "I look for opportunities to improve processes."
+];
+const BEHAVIORS = ["Documentation habits","Professional communication","Asking questions","Accountability","Teamwork","Data integrity","Risk awareness","Continuous improvement"];
+
+const SECTIONS = [
+  {
+    kicker:"5 min · Opening",
+    title:"Before We Begin",
+    teach:`This session is a guided field journal — capture the ideas that matter most for your program, your students, and the future biotechnology workforce.`,
+    items:[
+      {type:"reflect", id:"begin_mentor",
+       q:"Who was the person who first made you believe you could succeed?",
+       helper:"For example: a teacher who saw your potential first, a coach who pushed you further, or a supervisor who trusted you with real responsibility."}
+    ]
+  },
+  {
+    kicker:"Opening",
+    title:"Why This Workshop Matters",
+    teach:`Technical knowledge opens doors, but character, accountability, curiosity, communication, and professionalism determine how far we grow after those doors open. This session explores how educators, industry partners, and workforce leaders can intentionally develop workforce maturity <em>before</em> students enter their first biotechnology role.`,
+    callout:{lbl:"Lesson from the journey", quote:"Every expert was once a beginner. Every quality leader started somewhere."},
+    items:[
+      {type:"reflect", id:"why_journey",
+       q:"What parts of your own journey shaped the way you prepare, mentor, or hire the next generation today?",
+       helper:"For example: an early mistake that taught accountability, a mentor's high expectations, or a first job that revealed why documentation matters."}
+    ]
+  },
+  {
+    kicker:"10 min · Mini-Teach",
+    title:"What Is Quality Culture?",
+    teach:`In regulated life sciences, quality culture is the shared values, habits, and decisions that protect patient safety, data integrity, and public trust. For students, it begins before their first employee badge — in careful documentation, asking questions when uncertain, and communicating concerns respectfully.`,
+    callout:{lbl:"Classroom bridge", quote:"The question is not only, “Can students perform the technique?” It is also, “Are students developing the professional habits that help them thrive in quality-driven organizations?”"},
+    items:[
+      {type:"reflect", id:"qc_looks_like",
+       q:"What does quality culture look like in your classroom, lab, program, or workplace?",
+       helper:"For example: a student who flags a mislabeled reagent instead of assuming it's fine, or a lab team that documents every deviation — not just the convenient ones."}
+    ]
+  },
+  {
+    kicker:"Mini-Teach",
+    title:"The Workforce Maturity Model",
+    teach:`Workforce maturity is the readiness to contribute responsibly, professionally, and thoughtfully in a real workplace. It is more than employability — it is the capacity to become <strong>trusted</strong> in a regulated environment.`,
+    model:true,
+    items:[
+      {type:"choose", id:"model_strong", single:true, source:"model",
+       q:"Which area is strongest in your current program, team, or organization?"},
+      {type:"choose", id:"model_develop", single:true, source:"model",
+       q:"Which area needs the most intentional development before students and new hires enter industry?"},
+      {type:"reflect", id:"model_notes", optional:true,
+       q:"Notes for your table discussion (optional)",
+       helper:"e.g., a Knowledge gap can look like memorized steps without understanding the risk behind them; an Identity gap can look like doing things correctly only when someone is watching."}
+    ]
+  },
+  {
+    kicker:"15 min · Scenario Discussions",
+    title:"Apply Quality Principles",
+    teach:`Discuss each realistic situation with your table group. Capture your thinking, then reveal why it matters in a regulated environment.`,
+    items:[
+      {type:"scenario", id:"sc1", name:"Scenario 1 · The Missing Initial",
+       situation:"A student completes lab documentation but notices after leaving that one entry was not initialed. They consider signing it the next morning instead of correcting it immediately.",
+       qs:["What should happen?","What quality principles apply?","How could this become a teaching moment?"],
+       why:"An unsigned or backdated entry can trigger a data integrity finding during a real audit or FDA inspection — timing and honesty both matter."},
+      {type:"scenario", id:"sc2", name:"Scenario 2 · Everyone Else Did It",
+       situation:"During lab cleanup, one student notices another skipped a required equipment cleaning step. No instructor noticed. The student debates whether to say anything.",
+       qs:["What should happen?","How does quality culture influence this decision?","How could faculty teach this before graduation?"],
+       why:"Unreported shortcuts compound over time — small skipped steps are how larger safety and compliance failures begin."},
+      {type:"scenario", id:"sc3", name:"Scenario 3 · The Almost Correct Result",
+       situation:"A student receives experimental data close to the expected value. They consider adjusting a calculation because it was “probably just rounding.”",
+       qs:["Why is this dangerous?","What should happen instead?","What teaching moment does this create?"],
+       why:"Adjusting data — even slightly, even with good intentions — is a data integrity violation, not a rounding decision."},
+      {type:"scenario", id:"sc4", name:"Scenario 4 · The New Employee",
+       situation:"A recent graduate knows the science well but hesitates to ask questions for fear of looking inexperienced. After several weeks, a preventable mistake occurs.",
+       qs:["What contributed to the mistake?","How could college experiences prepare graduates to respond differently?"],
+       why:"Hesitating to ask questions is one of the most common root causes of preventable errors among new hires in regulated labs."}
+    ]
+  },
+  {
+    kicker:"13 min · Reflection",
+    title:"Professional Reflection",
+    teach:`Not a test — a conversation starter. Rate each professional habit for the maturity you see (or want to build) in your program, team, or organization.`,
+    callout:{lbl:"How to read the scale", quote:"“Developing” might mean double-checking work only when reminded; “Consistent” means catching your own errors before anyone asks."},
+    items:[
+      {type:"rating", id:"habits", statements:HABITS},
+      {type:"choose", id:"habit_top", single:true, source:"habits",
+       q:"Which habit would make the greatest difference for those entering biotechnology careers?"}
+    ]
+  },
+  {
+    kicker:"Reflection",
+    title:"Group Debrief",
+    teach:`Capture ideas from your table and the larger group discussion.`,
+    items:[
+      {type:"reflect", id:"debrief_behaviors",
+       q:"What professional behaviors should students and new hires practice before employment?",
+       helper:"e.g., arriving prepared, meeting deadlines, and asking clarifying questions before starting a task."},
+      {type:"reflect", id:"debrief_activities",
+       q:"What classroom or workplace practices already reinforce quality culture?",
+       helper:"e.g., peer review of lab notebooks, structured deviation write-ups, or graded documentation checks."},
+      {type:"reflect", id:"debrief_partnership",
+       q:"What could be strengthened through academic–industry partnership?",
+       helper:"e.g., guest audits of student lab practices, or industry-reviewed mock CAPAs."}
+    ]
+  },
+  {
+    kicker:"5 min · Action Planning",
+    title:"Faculty & Workforce Action Plan",
+    teach:`Choose one practical change. Small, intentional, repeated changes matter most.`,
+    items:[
+      {type:"reflect", id:"plan_initiative",
+       q:"Course, program, or workforce initiative I will apply this to:",
+       helper:"e.g., Intro to Biomanufacturing, a capstone lab course, or a work-based learning placement.",
+       lineInput:true},
+      {type:"choose", id:"plan_behavior", single:true, source:"behaviors",
+       q:"One quality-driven behavior I want to reinforce:"},
+      {type:"reflect", id:"plan_change",
+       q:"One specific change I will make this semester:",
+       helper:"e.g., add a weekly “documentation audit” where students review a peer's notebook entries."}
+    ]
+  },
+  {
+    kicker:"2 min · Close",
+    title:"30-Day Commitment",
+    teach:`The best workshop outcome is not what participants hear. It is what they carry back and use.`,
+    items:[
+      {type:"reflect", id:"c_will", q:"Within the next 30 days, I will:",
+       helper:"e.g., add a documentation-accuracy checkpoint to one lab assignment.", lineInput:true},
+      {type:"reflect", id:"c_barrier", q:"Potential barrier:",
+       helper:"e.g., limited class time, or students initially seeing it as “extra work.”", lineInput:true},
+      {type:"reflect", id:"c_measure", q:"How I will know it worked:",
+       helper:"e.g., fewer missing initials or corrections needed in student lab notebooks.", lineInput:true}
+    ]
+  },
+  {
+    kicker:"Resources",
+    title:"Insights & Continued Learning",
+    teach:`Voices from PQE Group professionals, and resources connecting education and industry.`,
+    insights:[
+      {q:"Beyond technical knowledge, what most often distinguishes successful employees in regulated environments?",
+       a:"Lifelong curiosity and a commitment to continuous learning are qualities that distinguish exceptional professionals in every field.",
+       who:"Gilda D'Incerti — CEO & Founder, PQE Group"},
+      {q:"One piece of advice for every community college biotechnology student?",
+       a:"Respect your colleagues, be excited to learn from them as much as possible, share information, openly communicate, and — for new graduates — take advantage of potential mentors within the organization.",
+       who:"Debra J. Kaufmann — Director Corporate Communications & PR, PQE Group"},
+      {q:"One mindset you wish every new graduate demonstrated on day one?",
+       a:"Come in with the mindset that you are important and the work you are doing, even as a beginner, is critical to the process.",
+       who:"Dr. Elizabeth Gilbert — Sr. Advisor & Executive Consultant, PQE Group"}
+    ],
+    resources:[
+      {b:"PQE Group", p:"Quality systems, validation, regulatory compliance, and digital transformation — insight into the expectations graduates will encounter throughout their careers."},
+      {b:"North Carolina Biotechnology Center", p:"Workforce initiatives, educational programs, grants, and career resources connecting education and the life sciences industry."},
+      {b:"North Carolina Community College System", p:"Statewide initiatives supporting workforce development, career pathways, and biotechnology education."},
+      {b:"BioBuzz North Carolina", p:"Connects educators, students, employers, and professionals across the state's biotechnology ecosystem."},
+      {b:"FDA: Data Integrity & Compliance With Drug CGMP", p:"Regulatory expectations for documentation, data integrity, recordkeeping, and ethical decision-making."},
+      {b:"Trinity National Consulting", p:"Educational resources on quality culture, leadership development, workforce readiness, responsible AI, and professional growth."}
+    ]
+  }
+];
+
+/* ============ STATE ============ */
+const STORE_KEY = "pqe_wmw_v1";
+let state = loadState();
+let idx = -1; // -1 = welcome ; SECTIONS.length = completion
+
+function loadState(){
+  try{ return JSON.parse(localStorage.getItem(STORE_KEY)) || {}; }
+  catch(e){ return {}; }
+}
+function save(){
+  try{ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }catch(e){}
+}
+function get(id){ return state[id]; }
+function set(id,val){ state[id]=val; save(); }
+
+/* ============ HELPERS ============ */
+const $ = s => document.querySelector(s);
+const app = $("#app");
+const esc = s => (s==null?"":String(s)).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+/* Count answered activities for progress/summary. */
+function isAnswered(item){
+  const v = get(item.id);
+  if(item.type==="rating"){ return v && Object.keys(v).length>0; }
+  if(item.type==="scenario"){ return v && String(v).trim().length>0; }
+  if(item.type==="choose"){ return v!=null && v!==""; }
+  if(item.type==="reflect"){ return v!=null && String(v).trim().length>0; }
+  return false;
+}
+function allActivities(){
+  const out=[];
+  SECTIONS.forEach(s => (s.items||[]).forEach(it=>{ if(!it.optional) out.push(it); }));
+  return out;
+}
+function answeredCount(){ return allActivities().filter(isAnswered).length; }
+
+/* ============ RENDER ============ */
+function render(){
+  window.scrollTo(0,0);
+  if(idx===-1) return renderWelcome();
+  if(idx>=SECTIONS.length) return renderDone();
+  renderSection(SECTIONS[idx]);
+  updateChrome();
+}
+
+function updateChrome(){
+  $("#topbar").hidden = false;
+  $("#navbar").hidden = false;
+  const total = SECTIONS.length;
+  $("#stepLabel").textContent = `Section ${idx+1} of ${total}`;
+  $("#progFill").style.width = ((idx+1)/total*100) + "%";
+  $("#backBtn").disabled = false;
+  $("#nextBtn").textContent = (idx===SECTIONS.length-1) ? "Finish ▸" : "Next ▸";
+}
+
+function renderWelcome(){
+  $("#topbar").hidden = true;
+  $("#navbar").hidden = true;
+  const started = answeredCount()>0;
+  app.innerHTML = `
+  <div class="screen hero">
+    <div class="mark-lg" aria-hidden="true"></div>
+    <h1>Quality Starts Before the Job</h1>
+    <div class="sub">Building Workforce Maturity in Biotechnology Education</div>
+    <p class="purpose">A guided reflection for the North Carolina biotechnology community — educators, industry professionals, and workforce leaders — on developing the professional habits, not just the technical skills, that help the next generation become trusted in quality-driven workplaces.</p>
+    <div class="aud">
+      <span>Biotech educators &amp; faculty</span>
+      <span>Industry professionals</span>
+      <span>Workforce &amp; career-pathway leaders</span>
+      <span>Program &amp; department leaders</span>
+      <span>Industry partners &amp; employers</span>
+    </div>
+    <div class="obj">
+      <h2>What you'll do</h2>
+      <ol>
+        <li>Define workforce maturity and connect quality culture to biotechnology education.</li>
+        <li>Work through four real-world quality scenarios.</li>
+        <li>Reflect on eight professional habits that shape readiness.</li>
+        <li>Leave with one practical change to apply and a 30-day commitment.</li>
+      </ol>
+      <div class="roadmap">Workforce Development &amp; Career Pathways · a ~45-minute journey · your responses save automatically in this browser.</div>
+    </div>
+    <div style="margin-top:24px">
+      <button class="btn primary" id="startBtn" type="button" style="padding:14px 34px;font-size:17px">${started?"Continue ▸":"Start ▸"}</button>
+    </div>
+    ${started?`<div style="margin-top:12px"><button class="btn ghost" id="reviewBtn" type="button">Review my responses</button></div>`:""}
+    <p class="who">Developed &amp; presented by <b>Dr. Elizabeth Gilbert</b> · Sr. Advisor | Executive Consultant, PQE Group<br>First Annual NC Community College BioTeach Conference · July 17, 2026 · Pitt Community College, Winterville, NC</p>
+    <p class="footer-note">Educational reflection tools courtesy of Trinity National Consulting, used with permission for this workshop.</p>
+  </div>`;
+  $("#startBtn").onclick = ()=>{ idx=0; render(); };
+  const rb = $("#reviewBtn"); if(rb) rb.onclick = ()=>{ idx=SECTIONS.length; render(); };
+}
+
+function renderSection(sec){
+  let h = `<div class="screen"><span class="kicker">${esc(sec.kicker)}</span>
+    <h2 class="sec-title">${esc(sec.title)}</h2>`;
+  if(sec.teach) h += `<p class="teach">${sec.teach}</p>`;
+  if(sec.callout) h += calloutHTML(sec.callout);
+  if(sec.model) h += modelHTML();
+  (sec.items||[]).forEach(it => h += itemHTML(it));
+  if(sec.insights) h += insightsHTML(sec.insights);
+  if(sec.resources) h += resourcesHTML(sec.resources);
+  h += `</div>`;
+  app.innerHTML = h;
+  wire(sec);
+}
+
+function calloutHTML(c){
+  return `<div class="callout"><span class="lbl">${esc(c.lbl)}</span><blockquote>${esc(c.quote)}</blockquote></div>`;
+}
+function modelHTML(){
+  return `<div class="model">${MODEL.map(m=>`<div class="m"><b>${esc(m.b)}</b><span>${esc(m.s)}</span></div>`).join("")}</div>`;
+}
+function insightsHTML(list){
+  return `<h3 style="font-size:16px;color:var(--blue-deep);margin:18px 0 6px">Insights from PQE professionals</h3>` +
+    list.map(x=>`<div class="callout"><span class="lbl">${esc(x.q)}</span><blockquote>“${esc(x.a)}”</blockquote><div style="font-size:12.5px;color:var(--muted);margin-top:6px;font-weight:700">${esc(x.who)}</div></div>`).join("");
+}
+function resourcesHTML(list){
+  return `<h3 style="font-size:16px;color:var(--blue-deep);margin:18px 0 8px">Resources &amp; continued learning</h3>` +
+    list.map(r=>`<div class="res"><b>${esc(r.b)}</b><p>${esc(r.p)}</p></div>`).join("");
+}
+
+function optionsFor(source){
+  if(source==="model") return MODEL.map(m=>({v:m.b, b:m.b, s:m.s}));
+  if(source==="habits") return HABITS.map((s,i)=>({v:String(i), b:"Habit "+(i+1), s:s}));
+  if(source==="behaviors") return BEHAVIORS.map(b=>({v:b, b:b, s:""}));
+  return [];
+}
+
+function itemHTML(it){
+  const atag = `<div class="atag"><span class="dot"></span>Activity</div>`;
+  if(it.type==="reflect"){
+    const v = esc(get(it.id)||"");
+    const field = it.lineInput
+      ? `<input class="line" id="f_${it.id}" value="${v}" aria-label="${esc(it.q)}">`
+      : `<textarea id="f_${it.id}" aria-label="${esc(it.q)}">${v}</textarea>`;
+    return `<div class="activity">${it.optional?"":atag}
+      <label class="q" for="f_${it.id}">${esc(it.q)}</label>
+      ${it.helper?`<div class="helper">${esc(it.helper)}</div>`:""}
+      ${field}
+      <div class="saved-note" id="s_${it.id}">Saved ✓</div></div>`;
+  }
+  if(it.type==="choose"){
+    const opts = optionsFor(it.source);
+    const cur = get(it.id);
+    const cards = opts.map(o=>`<button class="choice" type="button" data-id="${it.id}" data-v="${esc(o.v)}" aria-pressed="${cur===o.v}">
+      <b>${esc(o.b)}</b>${o.s?`<span>${esc(o.s)}</span>`:""}</button>`).join("");
+    return `<div class="activity">${atag}
+      <label class="q">${esc(it.q)}</label>
+      <div class="choices">${cards}</div>
+      <div class="saved-note" id="s_${it.id}">Saved ✓</div></div>`;
+  }
+  if(it.type==="rating"){
+    const cur = get(it.id)||{};
+    const levels=["Developing","Growing","Consistent"];
+    const rows = it.statements.map((st,i)=>{
+      const btns = levels.map((lv,li)=>`<button type="button" class="lvl${li+1}" data-id="${it.id}" data-row="${i}" data-v="${lv}" aria-pressed="${cur[i]===lv}" aria-label="${esc(st)} — ${lv}">${lv}</button>`).join("");
+      return `<div class="rate-row"><div class="stmt">${esc(st)}</div><div class="rate-opts">${btns}</div></div>`;
+    }).join("");
+    return `<div class="activity">${atag}<h3>Rate each habit</h3><div>${rows}</div>
+      <div class="saved-note" id="s_${it.id}">Saved ✓</div></div>`;
+  }
+  if(it.type==="scenario"){
+    const v = esc(get(it.id)||"");
+    return `<div class="activity">${atag}
+      <div class="scenario"><div class="sh">${esc(it.name)}</div><p>${esc(it.situation)}</p></div>
+      <ol class="qs">${it.qs.map(q=>`<li>${esc(q)}</li>`).join("")}</ol>
+      <label class="q" for="f_${it.id}" style="font-size:14.5px">Your table's notes</label>
+      <textarea id="f_${it.id}" aria-label="Notes for ${esc(it.name)}">${v}</textarea>
+      <div class="saved-note" id="s_${it.id}">Saved ✓</div>
+      <button class="reveal-btn" type="button" data-why="${it.id}" aria-expanded="false">Why it matters ▾</button>
+      <div class="why" id="why_${it.id}"><b>Why it matters:</b> ${esc(it.why)}</div>
+    </div>`;
+  }
+  return "";
+}
+
+let saveTimers={};
+function flashSaved(id){
+  const el = document.getElementById("s_"+id); if(!el) return;
+  el.classList.add("show");
+  clearTimeout(saveTimers[id]);
+  saveTimers[id]=setTimeout(()=>el.classList.remove("show"),1200);
+}
+
+function wire(sec){
+  // text / line inputs
+  app.querySelectorAll("textarea, input.line").forEach(el=>{
+    const id = el.id.replace(/^f_/,"");
+    el.addEventListener("input", ()=>{ set(id, el.value); flashSaved(id); });
+  });
+  // choice cards
+  app.querySelectorAll(".choice").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const id=btn.dataset.id, v=btn.dataset.v;
+      const cur=get(id);
+      const nv = (cur===v)? "" : v;              // toggle off if same
+      set(id, nv);
+      app.querySelectorAll(`.choice[data-id="${id}"]`).forEach(b=>b.setAttribute("aria-pressed", b.dataset.v===nv));
+      flashSaved(id);
+    });
+  });
+  // rating buttons
+  app.querySelectorAll(".rate-opts button").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const id=btn.dataset.id, row=+btn.dataset.row, v=btn.dataset.v;
+      const cur=Object.assign({}, get(id)||{});
+      if(cur[row]===v){ delete cur[row]; } else { cur[row]=v; }
+      set(id, cur);
+      const rowEl = btn.closest(".rate-opts");
+      rowEl.querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed", cur[row]===b.dataset.v));
+      flashSaved(id);
+    });
+  });
+  // reveal
+  app.querySelectorAll(".reveal-btn").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const why = document.getElementById("why_"+btn.dataset.why);
+      const open = why.classList.toggle("show");
+      btn.setAttribute("aria-expanded", open);
+      btn.textContent = open ? "Hide why it matters ▴" : "Why it matters ▾";
+    });
+  });
+}
+
+/* ============ COMPLETION ============ */
+function labelForChoose(it, val){
+  if(val==null||val==="") return null;
+  const opts = optionsFor(it.source);
+  const o = opts.find(o=>o.v===val);
+  if(!o) return val;
+  return it.source==="habits" ? o.s : o.b;
+}
+function reviewHTML(){
+  let h="";
+  SECTIONS.forEach(sec=>{
+    const parts=[];
+    (sec.items||[]).forEach(it=>{
+      if(it.type==="reflect"){
+        const v=get(it.id);
+        parts.push(itemReview(it.q, v));
+      } else if(it.type==="scenario"){
+        parts.push(itemReview(it.name, get(it.id)));
+      } else if(it.type==="choose"){
+        parts.push(itemReview(it.q, labelForChoose(it, get(it.id))));
+      } else if(it.type==="rating"){
+        const cur=get(it.id)||{};
+        const lines=it.statements.map((st,i)=> cur[i]?`• ${st} — ${cur[i]}`:null).filter(Boolean).join("\n");
+        parts.push(itemReview("Professional habit self-rating", lines));
+      }
+    });
+    if(parts.length) h += `<div class="review-block"><h3>${esc(sec.title)}</h3>${parts.join("")}</div>`;
+  });
+  return h;
+}
+function itemReview(q, a){
+  const ans = (a && String(a).trim()) ? `<div class="ra">${esc(a)}</div>` : `<div class="ra empty">— not yet answered —</div>`;
+  return `<div class="review-item"><div class="rq">${esc(q)}</div>${ans}</div>`;
+}
+
+function renderDone(){
+  $("#topbar").hidden = false;
+  $("#navbar").hidden = false;
+  $("#stepLabel").textContent = "Complete";
+  $("#progFill").style.width = "100%";
+  $("#backBtn").disabled = false;
+  $("#nextBtn").textContent = "Print / Save ▸";
+
+  const done = answeredCount(), total = allActivities().length;
+  app.innerHTML = `
+  <div class="screen done">
+    <h1>You've completed the reflection</h1>
+    <p class="lead">Quality starts before the job — thank you for helping build tomorrow's biotechnology workforce.</p>
+    <div class="stat">
+      <div class="box"><b>${done}</b><span>of ${total} activities<br>with a response</span></div>
+      <div class="box"><b>1</b><span>classroom change<br>to carry back</span></div>
+    </div>
+    <div class="takeaways">
+      <h2>Key takeaways</h2>
+      <ul>
+        <li>Quality culture begins <em>before</em> a student's first employee badge.</li>
+        <li>Workforce maturity = Knowledge · Skills · Behaviors · Judgment · Identity.</li>
+        <li>Timing and honesty both matter — small skipped steps compound into failures.</li>
+        <li>The best outcome is not what you hear; it's what you carry back and use.</li>
+        <li>Small, intentional, repeated changes matter most.</li>
+      </ul>
+    </div>
+    <h2 style="font-size:18px;color:var(--blue-dark);margin:4px 0 2px">Your responses</h2>
+    <p class="teach small">Saved in this browser. Print or download a copy to keep.</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin:10px 0 6px">
+      <button class="btn ghost" id="printBtn" type="button">🖨 Print / Save as PDF</button>
+      <button class="btn ghost" id="dlBtn" type="button">⬇ Download (.txt)</button>
+    </div>
+    <div style="margin-top:8px">${reviewHTML()}</div>
+    <div style="margin-top:24px;display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn primary" id="homeBtn" type="button">Back to start</button>
+      <button class="btn ghost" id="clearBtn" type="button">Clear all responses</button>
+    </div>
+    <p class="footer-note">Workforce Maturity Workshop · Bioteach 2026 · PQE Group</p>
+  </div>`;
+  $("#printBtn").onclick = doPrint;
+  $("#dlBtn").onclick = doDownload;
+  $("#homeBtn").onclick = ()=>{ idx=-1; render(); };
+  $("#clearBtn").onclick = ()=>{
+    if(confirm("Clear all your saved responses? This cannot be undone.")){
+      state={}; try{localStorage.removeItem(STORE_KEY);}catch(e){}; idx=-1; render();
+    }
+  };
+}
+
+/* ============ EXPORT ============ */
+function transcriptText(){
+  let t = "QUALITY STARTS BEFORE THE JOB — Workforce Maturity Workshop\nPQE Group · Bioteach 2026\nMy responses\n\n";
+  SECTIONS.forEach(sec=>{
+    let block="";
+    (sec.items||[]).forEach(it=>{
+      if(it.type==="reflect"){ const v=get(it.id); if(v&&v.trim()) block+=`Q: ${it.q}\nA: ${v}\n\n`; }
+      else if(it.type==="scenario"){ const v=get(it.id); if(v&&v.trim()) block+=`${it.name}\nNotes: ${v}\n\n`; }
+      else if(it.type==="choose"){ const l=labelForChoose(it,get(it.id)); if(l) block+=`Q: ${it.q}\nA: ${l}\n\n`; }
+      else if(it.type==="rating"){ const cur=get(it.id)||{}; const lines=it.statements.map((st,i)=>cur[i]?`  - ${st} — ${cur[i]}`:null).filter(Boolean); if(lines.length) block+=`Professional habit self-rating:\n${lines.join("\n")}\n\n`; }
+    });
+    if(block) t += `== ${sec.title} ==\n${block}`;
+  });
+  return t;
+}
+function doDownload(){
+  const blob = new Blob([transcriptText()], {type:"text/plain"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "workforce-maturity-responses.txt";
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href), 1000);
+}
+function doPrint(){
+  const pt = $("#print-transcript");
+  let h = `<h1>Quality Starts Before the Job</h1><p class="pi">Workforce Maturity Workshop · PQE Group · Bioteach 2026 — My responses</p>`;
+  SECTIONS.forEach(sec=>{
+    let block="";
+    (sec.items||[]).forEach(it=>{
+      if(it.type==="reflect"){ const v=get(it.id); if(v&&v.trim()) block+=`<div class="pi"><div class="pq">${esc(it.q)}</div><div class="pa">${esc(v)}</div></div>`; }
+      else if(it.type==="scenario"){ const v=get(it.id); if(v&&v.trim()) block+=`<div class="pi"><div class="pq">${esc(it.name)}</div><div class="pa">${esc(v)}</div></div>`; }
+      else if(it.type==="choose"){ const l=labelForChoose(it,get(it.id)); if(l) block+=`<div class="pi"><div class="pq">${esc(it.q)}</div><div class="pa">${esc(l)}</div></div>`; }
+      else if(it.type==="rating"){ const cur=get(it.id)||{}; const lines=it.statements.map((st,i)=>cur[i]?`${st} — ${cur[i]}`:null).filter(Boolean); if(lines.length) block+=`<div class="pi"><div class="pq">Professional habit self-rating</div><div class="pa">${esc(lines.join("\n"))}</div></div>`; }
+    });
+    if(block) h += `<h3 style="color:#08415c;margin:14px 0 4px">${esc(sec.title)}</h3>${block}`;
+  });
+  pt.innerHTML = h;
+  window.print();
+}
+
+/* ============ NAV ============ */
+$("#backBtn").onclick = ()=>{ if(idx>-1){ idx--; render(); } };
+$("#nextBtn").onclick = ()=>{
+  if(idx>=SECTIONS.length){ doPrint(); return; }
+  idx++; render();
+};
+document.addEventListener("keydown", e=>{
+  if(e.target.matches("textarea, input")) return;
+  if(e.key==="ArrowRight" && idx>-1 && idx<SECTIONS.length) $("#nextBtn").click();
+  if(e.key==="ArrowLeft" && idx>-1) $("#backBtn").click();
+});
+
+render();
+</script>
+</body>
+</html>
